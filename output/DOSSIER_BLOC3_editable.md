@@ -6,23 +6,22 @@ Bachelor HETIC - C3.1, C3.2 et C3.3 - 5 novembre 2026
 
 ## Accès à la réalisation
 
-| Description | Valeur vérifiée |
+| Description | Valeur |
 |---|---|
-| Application locale | http://localhost:8080 |
-| Compte client de démonstration | client@mmotors.example |
-| Mot de passe client local | DemoClient2026! |
-| Compte administrateur de démonstration | admin@mmotors.example |
-| Mot de passe administrateur local | DemoAdmin2026! |
-| Projet source | Dossier m-motors, sous-dossiers frontend et backend |
-| Compte GitHub prévu | https://github.com/Adam-84 |
-| Dépôt Git public | Non publié à ce stade, conformément au choix de vérifier d'abord en local |
-| Application publique | Hébergeur et URL à définir après la validation locale |
+| Lien Git frontend | https://github.com/Adam-84/m-motors-bloc3/tree/main/frontend |
+| Lien Git backend | https://github.com/Adam-84/m-motors-bloc3/tree/main/backend |
+| Lien de l'application | https://m-motors-bloc3.onrender.com/ |
+| Login administrateur | admin@mmotors.example |
+| Mot de passe administrateur | Admin@20262027 |
+| Login client | client@mmotors.example |
+| Mot de passe client | User@20262027 |
 
-Cette réalisation reprend le projet M-Motors étudié dans mes blocs 1 et 2 : permettre l'achat ou la location avec option d'achat d'un véhicule d'occasion, puis traiter le dossier en ligne. Le front et l'API fonctionnent ensemble dans une application locale. Le code, les migrations de base de données et les tests accompagnent ce document.
+Cette réalisation reprend le projet M-Motors étudié dans mes blocs 1 et 2 : permettre l'achat ou la location avec option d'achat d'un véhicule d'occasion, puis traiter le dossier en ligne. Le front et l'API sont déployés ensemble sur Render (région Frankfurt) avec une base PostgreSQL. Le dépôt est un monorepo public : les deux liens ci-dessus pointent vers ses sous-dossiers frontend et backend.
 
-La publication reste une étape obligatoire de l'examen. Cette version sert à vérifier le projet avant cette publication : elle ne doit pas être déposée comme dossier final tant que les liens Git publics, l'URL HTTPS et les comptes d'évaluation distants ne sont pas renseignés et testés. Un lien localhost n'est accessible que sur l'ordinateur qui exécute l'application.
+L'hébergement gratuit met l'application en veille après 15 minutes d'inactivité : le premier chargement peut prendre une minute. L'état du service est visible sur https://m-motors-bloc3.onrender.com/actuator/health.
 
-Les comptes, véhicules, documents de test et tarifs sont fictifs. Les identifiants ci-dessus correspondent au script local ; ils ne donnent accès à aucun compte personnel.
+Les comptes, véhicules, documents de test et tarifs sont fictifs. Ces identifiants ne donnent accès à aucun compte personnel.
+
 
 <!-- page -->
 # 1 Continuité avec les blocs 1 et 2
@@ -62,7 +61,7 @@ Le navigateur charge les fichiers React et appelle les routes /api du même serv
 
 ```text
 Navigateur React
-       | HTTP local / HTTPS après publication
+       | HTTP local / HTTPS sur Render
 Spring Boot et Spring Security
        | API Controller : formats et routes
 MotorsService et BusinessRules
@@ -92,24 +91,28 @@ Pour ce périmètre, les pièces sont conservées en binaire dans la base. Une s
 
 Je prépare un monorepo : frontend contient React et Cypress ; backend contient l'API Java, les migrations SQL et les tests JUnit ; docs regroupe la conception, la procédure de déploiement et ce dossier. La séparation permet de retrouver immédiatement les deux composants tout en versionnant ensemble une évolution qui modifie leur contrat API.
 
-Le dossier final devra afficher deux liens explicites vers les sous-dossiers frontend et backend du dépôt public. Un monorepo n'empêche pas cette lecture. Le nom envisagé est m-motors-bloc3 sous le compte Adam-84 ; il reste une destination prévue tant que le dépôt n'a pas été publié.
+Le dossier final affiche deux liens explicites vers les sous-dossiers frontend et backend du dépôt public https://github.com/Adam-84/m-motors-bloc3. Un monorepo n'empêche pas cette lecture.
 
 ## Principe des branches
 
-```text
-main             version stable et vérifiée
-  \ feat/mvp     réalisation initiale du parcours complet
-  \ feat/US-xx   évolution courte liée à une user story
-  \ fix/BUG-xx   correction et test de non-régression
-```
+J'applique un trunk-based simplifié avec des branches courtes. `main` est toujours stable et déployable ; toute évolution passe par une pull request.
 
-Le dépôt local a été initialisé sur main, avec un premier commit de cadrage. La réalisation est préparée sur feat/mvp. Ce choix évite de fabriquer un historique de sprints qui n'ont pas eu lieu. Pour les itérations suivantes, chaque branche part de main et revient par pull request après vérification.
+| Branche | Rôle | Règles |
+|---|---|---|
+| main | Version stable, déployée | Aucun commit direct ; pull requests avec CI verte uniquement |
+| feat/US-xx-nom | Une user story | Part de main, courte durée, supprimée après fusion |
+| fix/BUG-xx-nom | Correction d'un bug | Part de main, avec un test de non-régression |
+| docs/nom | Documentation seule | Même circuit de pull request |
 
-Je recommande de protéger main dans GitHub : refus des poussées directes, contrôles CI requis et revue avant fusion. Cette protection relève d'un réglage du dépôt distant ; sa présence n'est pas revendiquée tant que la publication n'a pas été faite.
+Cycle appliqué à chaque story : branche depuis main, test écrit en premier, implémentation, pull request avec modèle de description, fusion après CI verte et relecture du diff, suppression de la branche, déploiement depuis main, tag de version. La règle est écrite dans CONTRIBUTING.md et le modèle de PR dans .github/pull_request_template.md.
+
+Dans ce dépôt, feat/mvp porte la réalisation initiale du parcours complet, feat/pages-legales les pages légales et l'Open Graph, et docs/principe-branches ce principe. Je n'invente pas d'historique de sprints antérieurs : seules les branches et pull requests visibles sur GitHub sont revendiquées.
+
+Protection de main (réglage GitHub) : pull request obligatoire et contrôles de statut requis avant fusion. TODO : ajouter la capture du réglage une fois configuré.
 
 ## Contenu et qualité des commits
 
-Chaque commit doit correspondre à une intention lisible : évolution, correctif ou documentation. La CI fournie construit React, exécute les tests et conserve le rapport de couverture. Les mots de passe réels, bases locales et fichiers de travail sont exclus par .gitignore ; les comptes de démo n'ont aucune donnée réelle.
+Chaque commit correspond à une intention lisible (feat, fix, docs, test). La CI construit React, exécute les tests et conserve le rapport de couverture. Les mots de passe réels, bases locales et fichiers de travail sont exclus par .gitignore ; les comptes de démo n'ont aucune donnée réelle.
 
 Exemple d'itération : créer feat/US-03-dossier, écrire un test du comportement attendu, implémenter la route et l'écran, vérifier les tests, ouvrir une pull request puis fusionner après revue. Une story n'est DONE que si ses critères fonctionnels et la DoD sont respectés.
 
@@ -141,7 +144,7 @@ Le test doit couvrir la réussite, mais aussi un autre client qui devine l'ident
 
 La DoR rend la story prête à entrer dans le développement. Elle ne signifie pas que tout élément du backlog doit déjà être prêt : les besoins lointains peuvent être affinés plus tard.
 
-La DoD reprend celle du B2 et la rend vérifiable : critères d'acceptation validés, tests verts, absence de bug bloquant, changement relu, documentation à jour et incrément déployable. La vérification du déploiement fait partie de la clôture attendue dans ce bloc. À ce stade, la réalisation est vérifiée localement ; la preuve distante reste à produire.
+La DoD reprend celle du B2 et la rend vérifiable : critères d'acceptation validés, tests verts, absence de bug bloquant, changement relu, documentation à jour et incrément déployable. La vérification du déploiement fait partie de la clôture : l'application est déployée sur https://m-motors-bloc3.onrender.com/ depuis la branche main, et la santé du service est vérifiée sur /actuator/health (statut UP).
 
 <!-- page -->
 # 5 Périmètre des user stories réalisées
@@ -311,13 +314,13 @@ Le script start-local.ps1 compile React, lance les tests Maven et démarre le JA
 
 Les parcours à vérifier sont : filtrer les offres ; ouvrir une fiche ; s'inscrire ; sélectionner les services d'une location ; ouvrir un dossier ; transmettre les deux pièces ; soumettre ; consulter le suivi ; se connecter comme administrateur ; ouvrir le dossier et enregistrer une décision motivée.
 
-## Préparation de la publication
+## Publication sur Render
 
-Le Dockerfile effectue la construction React et les tests Java avant de produire une image d'exécution. Le workflow GitHub Actions fourni prépare également les tests sur PostgreSQL et Cypress. Le fichier render.yaml décrit une possibilité d'hébergement avec PostgreSQL managé ; il n'a pas encore créé de ressource.
+Le Dockerfile effectue la construction React et les tests Java avant de produire une image d'exécution. Le workflow GitHub Actions fourni prépare également les tests sur PostgreSQL et Cypress. Le fichier render.yaml (Blueprint) décrit le service web Docker et la base PostgreSQL managée, région Frankfurt, plan gratuit. Il a été appliqué depuis la branche main : l'application est en ligne en HTTPS avec les comptes de démonstration du tableau d'accès.
 
-À la demande de l'utilisateur, l'hébergeur sera choisi après l'essai local. Les références Render servent à préparer cette option, pas à confirmer une décision définitive. Son offre gratuite met les applications en veille et expire la base au bout de 30 jours [S9] : il faut tenir compte du calendrier de correction.
+J'ai retenu Render après l'essai local. Son offre gratuite met les applications en veille et expire la base au bout de 30 jours [S9] : il faut tenir compte du calendrier de correction.
 
-Le déploiement dès la première story DONE est une bonne pratique recommandée dans l'énoncé. Aucun déploiement anticipé n'a eu lieu pendant cette réalisation locale ; je ne présente donc pas de preuve historique artificielle. Pour les itérations suivantes, le premier incrément doit être mis en préproduction dès qu'il est testable.
+Le déploiement dès la première story DONE est une bonne pratique recommandée dans l'énoncé. Dans cette réalisation, le développement a d'abord été validé en local ; la première mise en ligne regroupe donc l'ensemble des stories (US-01 à US-10) et non la seule première. Je ne présente pas de preuve historique artificielle : la preuve est le déploiement de main, visible sur Render et sur l'URL publique. Pour les itérations suivantes, chaque story DONE sera déployée dès qu'elle est fusionnée.
 
 ## Reprise et migration
 
