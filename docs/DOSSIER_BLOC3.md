@@ -92,24 +92,28 @@ Pour ce périmètre, les pièces sont conservées en binaire dans la base. Une s
 
 Je prépare un monorepo : frontend contient React et Cypress ; backend contient l'API Java, les migrations SQL et les tests JUnit ; docs regroupe la conception, la procédure de déploiement et ce dossier. La séparation permet de retrouver immédiatement les deux composants tout en versionnant ensemble une évolution qui modifie leur contrat API.
 
-Le dossier final devra afficher deux liens explicites vers les sous-dossiers frontend et backend du dépôt public. Un monorepo n'empêche pas cette lecture. Le nom envisagé est m-motors-bloc3 sous le compte Adam-84 ; il reste une destination prévue tant que le dépôt n'a pas été publié.
+Le dossier final affiche deux liens explicites vers les sous-dossiers frontend et backend du dépôt public https://github.com/Adam-84/m-motors-bloc3. Un monorepo n'empêche pas cette lecture.
 
 ## Principe des branches
 
-```text
-main             version stable et vérifiée
-  \ feat/mvp     réalisation initiale du parcours complet
-  \ feat/US-xx   évolution courte liée à une user story
-  \ fix/BUG-xx   correction et test de non-régression
-```
+J'applique un trunk-based simplifié avec des branches courtes. `main` est toujours stable et déployable ; toute évolution passe par une pull request.
 
-Le dépôt local a été initialisé sur main, avec un premier commit de cadrage. La réalisation est préparée sur feat/mvp. Ce choix évite de fabriquer un historique de sprints qui n'ont pas eu lieu. Pour les itérations suivantes, chaque branche part de main et revient par pull request après vérification.
+| Branche | Rôle | Règles |
+|---|---|---|
+| main | Version stable, déployée | Aucun commit direct ; pull requests avec CI verte uniquement |
+| feat/US-xx-nom | Une user story | Part de main, courte durée, supprimée après fusion |
+| fix/BUG-xx-nom | Correction d'un bug | Part de main, avec un test de non-régression |
+| docs/nom | Documentation seule | Même circuit de pull request |
 
-Je recommande de protéger main dans GitHub : refus des poussées directes, contrôles CI requis et revue avant fusion. Cette protection relève d'un réglage du dépôt distant ; sa présence n'est pas revendiquée tant que la publication n'a pas été faite.
+Cycle appliqué à chaque story : branche depuis main, test écrit en premier, implémentation, pull request avec modèle de description, fusion après CI verte et relecture du diff, suppression de la branche, déploiement depuis main, tag de version. La règle est écrite dans CONTRIBUTING.md et le modèle de PR dans .github/pull_request_template.md.
+
+Dans ce dépôt, feat/mvp porte la réalisation initiale du parcours complet, feat/pages-legales les pages légales et l'Open Graph, et docs/principe-branches ce principe. Je n'invente pas d'historique de sprints antérieurs : seules les branches et pull requests visibles sur GitHub sont revendiquées.
+
+Protection de main (réglage GitHub) : pull request obligatoire et contrôles de statut requis avant fusion. TODO : ajouter la capture du réglage une fois configuré.
 
 ## Contenu et qualité des commits
 
-Chaque commit doit correspondre à une intention lisible : évolution, correctif ou documentation. La CI fournie construit React, exécute les tests et conserve le rapport de couverture. Les mots de passe réels, bases locales et fichiers de travail sont exclus par .gitignore ; les comptes de démo n'ont aucune donnée réelle.
+Chaque commit correspond à une intention lisible (feat, fix, docs, test). La CI construit React, exécute les tests et conserve le rapport de couverture. Les mots de passe réels, bases locales et fichiers de travail sont exclus par .gitignore ; les comptes de démo n'ont aucune donnée réelle.
 
 Exemple d'itération : créer feat/US-03-dossier, écrire un test du comportement attendu, implémenter la route et l'écran, vérifier les tests, ouvrir une pull request puis fusionner après revue. Une story n'est DONE que si ses critères fonctionnels et la DoD sont respectés.
 
