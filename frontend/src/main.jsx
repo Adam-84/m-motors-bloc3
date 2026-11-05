@@ -560,6 +560,58 @@ function App() {
             </div>
           </section>
         )}
+        {page === "mentions" && (
+          <section className="legal">
+            <h1>Mentions légales</h1>
+            <p>
+              Ce site est un projet pédagogique réalisé dans le cadre de
+              l’examen Bloc 3 du Bachelor HETIC. Il ne propose aucune vente ni
+              location réelle ; les véhicules, comptes et tarifs sont fictifs.
+            </p>
+            <h2>Éditeur</h2>
+            <p>Adam Ghajdaoui, étudiant. Contact : TODO adresse e-mail.</p>
+            <p>Responsable de la publication : Adam Ghajdaoui.</p>
+            <h2>Hébergement</h2>
+            <p>TODO nom, adresse et site de l’hébergeur choisi.</p>
+            <h2>Propriété intellectuelle</h2>
+            <p>
+              Le nom M-Motors est utilisé dans le seul cadre de l’énoncé de
+              l’examen. TODO préciser la licence du code et des visuels.
+            </p>
+          </section>
+        )}
+        {page === "confidentialite" && (
+          <section className="legal">
+            <h1>Politique de confidentialité</h1>
+            <h2>Données collectées</h2>
+            <p>
+              À l’inscription : nom, adresse e-mail et mot de passe (conservé
+              sous forme hachée). Pour un dossier : les pièces que vous
+              téléversez et l’état du dossier. N’envoyez que des documents
+              fictifs.
+            </p>
+            <h2>Finalités et base légale</h2>
+            <p>
+              Gérer votre compte et instruire votre dossier d’achat ou de
+              location, à votre demande. TODO confirmer la base légale
+              retenue.
+            </p>
+            <h2>Durée de conservation</h2>
+            <p>TODO fixer une durée de conservation des dossiers et des pièces.</p>
+            <h2>Destinataires et sécurité</h2>
+            <p>
+              Seuls vous et l’équipe d’administration accédez à votre dossier.
+              Aucune donnée n’est transmise à des tiers publicitaires. Le
+              cookie utilisé est un cookie de session strictement nécessaire.
+            </p>
+            <h2>Vos droits</h2>
+            <p>
+              Accès, rectification, effacement, opposition et portabilité :
+              écrivez à TODO adresse e-mail de contact. Vous pouvez saisir la
+              CNIL (cnil.fr).
+            </p>
+          </section>
+        )}
         {page === "compte" && (
           <section className="account section">
             <div className="account-intro">
@@ -942,6 +994,12 @@ function App() {
       <footer>
         <div className="brand">M-MOTORS.</div>
         <p>Une nouvelle route, depuis 1987.</p>
+        <nav aria-label="Informations légales" className="legal-links">
+          <button onClick={() => navigate("mentions")}>Mentions légales</button>
+          <button onClick={() => navigate("confidentialite")}>
+            Confidentialité
+          </button>
+        </nav>
         <span>Projet pédagogique · Adam Ghajdaoui · Bloc 3</span>
       </footer>
     </>

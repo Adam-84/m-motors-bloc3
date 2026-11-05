@@ -24,7 +24,7 @@ class SecurityConfig {
     }
     @Bean SecurityFilterChain security(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/index.html", "/assets/**", "/favicon.svg", "/api/csrf", "/api/register", "/api/login", "/actuator/health").permitAll()
+            .requestMatchers("/", "/index.html", "/assets/**", "/favicon.svg", "/og-image.png", "/api/csrf", "/api/register", "/api/login", "/actuator/health").permitAll()
             .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/vehicles", "/api/vehicles/*", "/api/services").permitAll()
             .requestMatchers("/api/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated())

@@ -1092,3 +1092,27 @@ footer > span {
     grid-template-columns: 1fr;
   }
 }
+
+.legal {
+  max-width: 760px;
+  margin: 50px auto;
+  padding: 0 6%;
+  line-height: 1.6;
+}
+.legal h2 {
+  font-size: 20px;
+  margin-top: 28px;
+}
+.legal-links {
+  display: flex;
+  gap: 18px;
+}
+.legal-links button {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
