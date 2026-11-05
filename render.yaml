@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: m-motors-bloc3
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /actuator/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: DEMO_MODE
+        value: "true"
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: USER_PASSWORD
+        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: m-motors-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: m-motors-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: m-motors-db
+          property: database
+      - key: DATABASE_USER
+        fromDatabase:
+          name: m-motors-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: m-motors-db
+          property: password
+databases:
+  - name: m-motors-db
+    databaseName: mmotors
+    user: mmotors
+    plan: free
+    region: frankfurt
+    ipAllowList: []

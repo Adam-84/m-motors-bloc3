@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="7.561" tests="2" failures="0">
+  <testsuite name="Root Suite" timestamp="2026-11-05T10:56:24" tests="0" file="cypress\e2e\parcours.cy.js" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="M-Motors : parcours de bout en bout" timestamp="2026-11-05T10:56:24" tests="2" time="7.560" failures="0">
+    <testcase name="M-Motors : parcours de bout en bout filtre le catalogue puis crée et soumet un dossier client" time="4.706" classname="filtre le catalogue puis crée et soumet un dossier client">
+    </testcase>
+    <testcase name="M-Motors : parcours de bout en bout permet à un administrateur d’instruire le dossier et de motiver un refus" time="2.774" classname="permet à un administrateur d’instruire le dossier et de motiver un refus">
+    </testcase>
+  </testsuite>
+</testsuites>

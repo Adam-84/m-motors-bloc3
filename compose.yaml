@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: mmotors
+      POSTGRES_USER: mmotors
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?Définissez DATABASE_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mmotors"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/mmotors
+      DATABASE_USER: mmotors
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?Définissez DATABASE_PASSWORD}
+      DEMO_MODE: "true"
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Définissez ADMIN_PASSWORD}
+      USER_PASSWORD: ${USER_PASSWORD:?Définissez USER_PASSWORD}
+      COOKIE_SECURE: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  postgres-data:

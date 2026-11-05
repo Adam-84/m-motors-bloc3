@@ -1,0 +1,9 @@
+**/node_modules
+**/target
+backend/src/main/resources/static
+.git
+.local.env
+data
+output
+frontend/cypress/screenshots
+frontend/cypress/videos

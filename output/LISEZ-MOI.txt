@@ -1,0 +1,25 @@
+M-MOTORS - VERSION LOCALE BLOC 3
+
+Ouvrir l'application démarrée : http://localhost:8080
+
+Client : client@mmotors.example / DemoClient2026!
+Administrateur : admin@mmotors.example / DemoAdmin2026!
+Comptes fictifs réservés à la démonstration.
+
+Pour redémarrer, ouvrir PowerShell dans le dossier m-motors et exécuter :
+  .\start-local.ps1 -SkipBuild
+
+Pour reconstruire les sources et lancer les tests :
+  .\start-local.ps1
+
+Le PDF est une version de validation locale. Les liens Git publics,
+l'application HTTPS et les comptes distants doivent encore être ajoutés
+après le choix d'hébergement, avant le dépôt final de l'examen.
+
+Les rapports JUnit et JaCoCo sont dans backend/target.
+La source éditable du dossier est DOSSIER_BLOC3_editable.md.
+La source de génération est docs/DOSSIER_BLOC3.md.
+Les mesures réelles sont conservées dans verification.json.
+
+Les données locales et les dépendances ne sont pas incluses dans l'archive.
+Le JAR intègre le front compilé. Java 21 est nécessaire pour le lancer.

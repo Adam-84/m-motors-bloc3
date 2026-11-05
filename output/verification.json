@@ -1,0 +1,17 @@
+{
+  "tests": 32,
+  "failures": 0,
+  "errors": 0,
+  "line_covered": 182,
+  "line_total": 199,
+  "line_coverage": "91,46",
+  "branch_covered": 91,
+  "branch_total": 123,
+  "branch_coverage": "73,98",
+  "instruction_covered": 1746,
+  "instruction_total": 1937,
+  "instruction_coverage": "90,14",
+  "cypress_tests": 2,
+  "cypress_failures": 0,
+  "generated_at": "2026-11-05T11:56:47.811009+01:00"
+}
