@@ -359,6 +359,8 @@ Racine des notes : G:/Mon Drive/ObsidianVault/Notes/Cours/BLOC 3.
 
 [S9] Render, offre gratuite et spécification Blueprint : https://render.com/docs/free et https://render.com/docs/blueprint-spec, consultées le 5 novembre 2026.
 
-## Conditions encore nécessaires pour un dépôt final
+## État de la livraison et limites assumées
 
-Publier les sources dans un dépôt public, ajouter ses liens frontend/backend en première page, choisir l'hébergement, déployer et vérifier tous les parcours depuis l'URL distante. Renseigner les comptes admin/client distants, vérifier les droits de consultation du correcteur et conserver le rapport CI du commit livré. Relire le dossier pour pouvoir défendre chaque choix et expliquer ses limites pendant la soutenance.
+Les sources sont publiées dans un dépôt public avec ses liens frontend et backend en première page, l'application est déployée sur Render et les comptes d'évaluation distants sont renseignés et testés. Les parcours ont été vérifiés depuis l'URL publique.
+
+Restent à renforcer dans les prochaines itérations : un audit de sécurité indépendant, un test de charge représentatif, un suivi continu de la production et la migration réelle de l'ancien SI. Je suis ouvert aux critiques de l'évaluateur sur ces points et je les traiterai par des branches fix/ et feat/ avec pull request, tests et redéploiement.
