@@ -38,7 +38,7 @@ Rappels de forme de l'énoncé : milliers séparés par une espace (`1 000`), to
 
 4/43 signes détectés par le scan, 2 sont de vrais manques :
 
-- **38 Pas de politique de confidentialité** (réel) : l'app collecte des données personnelles (inscription, pièces d'identité fictives). Ajouter deux pages `mentions-legales` et `confidentialite` avec les champs à compléter marqués `TODO` (ne rien inventer). Cohérent avec le RGPD vu au Bloc 1/2.
+- **38 Pas de politique de confidentialité** (réel) : l'app collecte des données personnelles (inscription, pièces d'identité fictives). Ajouter deux pages `mentions-legales` et `confidentialite` (fait : pages complétées, contact via le profil GitHub). Cohérent avec le RGPD vu au Bloc 1/2.
 - **41 Pas d'image Open Graph** (mineur) : ajouter `og:image`, `og:title` dans `frontend/index.html` (réutiliser `output/apercu-catalogue.png`).
 - 29 « AI words » et 31 « badge New » : détectés dans le bundle compilé `static/assets/index-*.js`, probables faux positifs. Ils disparaissent si on ne scanne que `frontend/src`. À vérifier dans `main.jsx` : « Une nouvelle route » est un slogan, pas un badge.
 - À contrôler à l'oeil : hero centré avec titre + lien (08), cartes de fonctionnalités (09), espacements entre sections (16), temps de chargement après réveil du plan gratuit Render (43).

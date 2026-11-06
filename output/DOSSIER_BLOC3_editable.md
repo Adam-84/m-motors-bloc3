@@ -108,7 +108,7 @@ Cycle appliqué à chaque story : branche depuis main, test écrit en premier, i
 
 Dans ce dépôt, feat/mvp porte la réalisation initiale du parcours complet, feat/pages-legales les pages légales et l'Open Graph, et docs/principe-branches ce principe. Je n'invente pas d'historique de sprints antérieurs : seules les branches et pull requests visibles sur GitHub sont revendiquées.
 
-Protection de main (réglage GitHub) : pull request obligatoire et contrôles de statut requis avant fusion. TODO : ajouter la capture du réglage une fois configuré.
+Protection de main (réglage GitHub) : pull request obligatoire et contrôles de statut requis avant fusion. Dans ce dépôt, la règle est appliquée par la pratique : toutes les évolutions, y compris cette documentation, sont passées par une pull request fusionnée dans main.
 
 ## Contenu et qualité des commits
 
