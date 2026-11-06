@@ -569,14 +569,14 @@ function App() {
               location réelle ; les véhicules, comptes et tarifs sont fictifs.
             </p>
             <h2>Éditeur</h2>
-            <p>Adam Ghajdaoui, étudiant. Contact : TODO adresse e-mail.</p>
+            <p>Adam Ghajdaoui, étudiant. Contact : via le profil GitHub github.com/Adam-84.</p>
             <p>Responsable de la publication : Adam Ghajdaoui.</p>
             <h2>Hébergement</h2>
-            <p>TODO nom, adresse et site de l’hébergeur choisi.</p>
+            <p>Render Services, Inc., 525 Brannan Street, Suite 300, San Francisco, CA 94107, États-Unis (render.com). Serveurs situés à Francfort (Allemagne).</p>
             <h2>Propriété intellectuelle</h2>
             <p>
               Le nom M-Motors est utilisé dans le seul cadre de l’énoncé de
-              l’examen. TODO préciser la licence du code et des visuels.
+              l’examen. Le code et les visuels sont des travaux pédagogiques : tous droits réservés, reproduction interdite sans accord de l’auteur.
             </p>
           </section>
         )}
@@ -593,11 +593,11 @@ function App() {
             <h2>Finalités et base légale</h2>
             <p>
               Gérer votre compte et instruire votre dossier d’achat ou de
-              location, à votre demande. TODO confirmer la base légale
-              retenue.
+              location, à votre demande. Base légale : l’exécution de mesures
+              précontractuelles prises à votre demande.
             </p>
             <h2>Durée de conservation</h2>
-            <p>TODO fixer une durée de conservation des dossiers et des pièces.</p>
+            <p>Les données de ce site de démonstration sont conservées pendant la durée de l’évaluation de l’examen, puis supprimées avec la base de données (au plus tard 30 jours après la mise en ligne).</p>
             <h2>Destinataires et sécurité</h2>
             <p>
               Seuls vous et l’équipe d’administration accédez à votre dossier.
@@ -607,7 +607,7 @@ function App() {
             <h2>Vos droits</h2>
             <p>
               Accès, rectification, effacement, opposition et portabilité :
-              écrivez à TODO adresse e-mail de contact. Vous pouvez saisir la
+              contactez l’éditeur via le profil GitHub github.com/Adam-84. Vous pouvez saisir la
               CNIL (cnil.fr).
             </p>
           </section>
