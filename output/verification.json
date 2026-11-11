@@ -1,5 +1,5 @@
 {
-  "tests": 54,
+  "tests": 56,
   "failures": 0,
   "errors": 0,
   "line_covered": 357,
@@ -8,10 +8,10 @@
   "branch_covered": 118,
   "branch_total": 123,
   "branch_coverage": "95,93",
-  "instruction_covered": 2040,
-  "instruction_total": 2096,
+  "instruction_covered": 2041,
+  "instruction_total": 2097,
   "instruction_coverage": "97,33",
   "cypress_tests": 2,
   "cypress_failures": 0,
-  "generated_at": "2026-11-11T18:09:15.269837+01:00"
+  "generated_at": "2026-11-11T18:58:28.558933+01:00"
 }
