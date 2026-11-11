@@ -1,17 +1,17 @@
 {
-  "tests": 56,
+  "tests": 59,
   "failures": 0,
   "errors": 0,
-  "line_covered": 357,
-  "line_total": 367,
-  "line_coverage": "97,28",
-  "branch_covered": 118,
-  "branch_total": 123,
-  "branch_coverage": "95,93",
-  "instruction_covered": 2041,
-  "instruction_total": 2097,
-  "instruction_coverage": "97,33",
+  "line_covered": 371,
+  "line_total": 380,
+  "line_coverage": "97,63",
+  "branch_covered": 122,
+  "branch_total": 127,
+  "branch_coverage": "96,06",
+  "instruction_covered": 2116,
+  "instruction_total": 2166,
+  "instruction_coverage": "97,69",
   "cypress_tests": 2,
   "cypress_failures": 0,
-  "generated_at": "2026-11-11T18:58:28.558933+01:00"
+  "generated_at": "2026-11-11T20:15:41.873753+01:00"
 }
