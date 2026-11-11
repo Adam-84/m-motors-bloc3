@@ -57,20 +57,20 @@ Les prix de services sont des hypothèses explicites de démonstration : assuran
 
 ## Une application organisée en composants
 
-Le navigateur charge les fichiers React et appelle les routes /api du même serveur. Spring Security vérifie la session et le jeton CSRF avant l'appel du contrôleur. Le contrôleur valide les formats d'entrée ; MotorsService applique les règles métier dans une transaction puis interroge la base avec JDBC. Flyway crée et versionne le schéma.
+Le navigateur charge les fichiers React et appelle les routes /api du même serveur. Spring Security vérifie la session et le jeton CSRF avant l'appel du contrôleur. Le contrôleur valide les formats d'entrée ; les services (AccountService, VehicleService, DossierService) appliquent les règles métier dans une transaction puis interrogent la base avec JDBC. Flyway crée et versionne le schéma.
 
 ```text
 Navigateur React
        | HTTP local / HTTPS sur Render
 Spring Boot et Spring Security
        | API Controller : formats et routes
-MotorsService et BusinessRules
+Services par domaine et BusinessRules
        | requêtes paramétrées et transactions
 Base relationnelle : H2 local / PostgreSQL cible
        | utilisateurs, véhicules, dossiers, options, pièces
 ```
 
-Les classes ont des responsabilités distinctes : SecurityConfig configure l'authentification, Models décrit les entrées validées, ApiController expose les routes, MotorsService porte les traitements transactionnels et BusinessRules regroupe les règles qui se testent sans serveur. ApiErrors centralise les réponses d'erreur.
+Les classes ont des responsabilités distinctes : SecurityConfig configure l'authentification, Models décrit les entrées validées, ApiController expose les routes, AccountService, VehicleService et DossierService portent les traitements transactionnels (comptes, catalogue, dossiers) et BusinessRules regroupe les règles qui se testent sans serveur. ApiErrors centralise les réponses d'erreur.
 
 ## Modèle de données
 
@@ -207,9 +207,9 @@ Les valeurs ci-dessous sont calculées à partir des fichiers produits par Maven
 | Tests JUnit exécutés | 54 |
 | Échecs JUnit | 0 |
 | Erreurs JUnit | 0 |
-| Couverture des lignes backend | 96,88 % soit 310 / 320 lignes |
-| Couverture des branches backend | 96,12 % |
-| Couverture des instructions backend | 96,86 % |
+| Couverture des lignes backend | 97,28 % soit 357 / 367 lignes |
+| Couverture des branches backend | 95,93 % |
+| Couverture des instructions backend | 97,33 % |
 | Parcours Cypress | 2 tests de bout en bout, 0 échec |
 
 Le pourcentage porte sur les classes de production Java instrumentées par JaCoCo, y compris configuration, contrôleurs et gestion d'erreurs. Ce n'est pas une mesure de couverture du code React ni une preuve que tous les défauts possibles sont éliminés. Les classes et les compteurs détaillés restent disponibles dans target/site/jacoco/index.html.
@@ -380,7 +380,7 @@ Le premier dépôt a reçu trois critiques. Voici l'état de chacune, sans plus 
 | Critique | Constat | Réponse |
 |---|---|---|
 | Historique Git : un seul commit pour toute l'application, pas de branche par story | Exact : le parcours US-01 à US-10 est dans le commit 6696236 de feat/mvp | Écart reconnu en partie 3. Chaque amélioration passe désormais par sa branche, ses commits et sa pull request |
-| Code compact et peu lisible | Exact : lignes denses, plusieurs instructions par ligne, résultats en Map | BusinessRules (PR 6) et MotorsService (PR 8) réécrits : une instruction par ligne, constantes nommées pour les statuts, méthodes extraites, 32 tests alors existants inchangés. Limite : MotorsService n'est pas découpé en services par domaine, et 2 lignes dépassent encore 120 caractères |
+| Code compact et peu lisible | Exact : lignes denses, plusieurs instructions par ligne, résultats en Map | BusinessRules (PR 6) et MotorsService (PR 8) réécrits, puis ApiController, ApiErrors, SecurityConfig, DemoData et Models reformatés, et MotorsService découpé en AccountService, VehicleService et DossierService (deux branches refactor/). Une instruction par ligne, constantes nommées, aucune ligne de plus de 120 caractères dans le code principal, 54 tests inchangés et verts. Limite : les résultats restent des Map et non des objets typés, et ces reprises sont faites après le premier dépôt |
 | Démarche C3.3 centrée sur la configuration | Exact : l'exemple de la première version était une erreur de déploiement | Démarche reprise sur un bug de code, le faux PDF accepté, en partie 9 |
 | Branches peu testées (point faible de la couverture) | Exact : 74,42 % des branches avant la PR 11 | PR 11 : 22 tests sur les cas d'erreur et les cas limites (pièces, doublons, 404, 409, 413, démo), sans changer le code applicatif. Mesure actuelle dans le tableau de la partie 7. Restent quelques garde-fous défensifs non testés |
 
