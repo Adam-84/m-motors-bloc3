@@ -923,6 +923,31 @@ function App() {
                     Soumettre mon dossier ↗
                   </button>
                 )}
+                {dossier.status === "BROUILLON" && (
+                  <button
+                    className="outline full"
+                    disabled={busy}
+                    onClick={() => {
+                      if (
+                        !window.confirm(
+                          "Annuler ce brouillon ? Les pièces déposées seront supprimées.",
+                        )
+                      )
+                        return;
+                      act(async () => {
+                        await api(`/dossiers/${dossier.id}`, {
+                          method: "DELETE",
+                        });
+                        setDossier(null);
+                        await loadDossiers();
+                        navigate("dossiers");
+                        setMessage("Brouillon annulé.");
+                      });
+                    }}
+                  >
+                    Annuler ce brouillon
+                  </button>
+                )}
                 {dossier.reason && (
                   <div className="notice">
                     <strong>Retour de l’équipe</strong>
