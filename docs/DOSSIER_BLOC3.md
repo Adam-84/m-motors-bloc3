@@ -104,17 +104,17 @@ J'applique un trunk-based simplifié avec des branches courtes. `main` est toujo
 | fix/BUG-xx-nom | Correction d'un bug | Part de main, avec un test de non-régression |
 | docs/nom | Documentation seule | Même circuit de pull request |
 
-Cycle appliqué à chaque story : branche depuis main, test écrit en premier, implémentation, pull request avec modèle de description, fusion après CI verte et relecture du diff, suppression de la branche, déploiement depuis main, tag de version. La règle est écrite dans CONTRIBUTING.md et le modèle de PR dans .github/pull_request_template.md.
+Cycle cible pour chaque story : branche depuis main, test écrit en premier, implémentation, pull request avec modèle de description, fusion après CI verte et relecture du diff, suppression de la branche, déploiement depuis main, tag de version. La règle est écrite dans CONTRIBUTING.md et le modèle de PR dans .github/pull_request_template.md.
 
-Dans ce dépôt, feat/mvp porte la réalisation initiale du parcours complet, feat/pages-legales les pages légales et l'Open Graph, et docs/principe-branches ce principe. Je n'invente pas d'historique de sprints antérieurs : seules les branches et pull requests visibles sur GitHub sont revendiquées.
+**Écart reconnu entre ce cycle et l'historique.** Le premier incrément, le parcours complet US-01 à US-10, a été livré en un seul commit sur feat/mvp (6696236), sans branche ni pull request par story. L'historique ne permet donc pas de vérifier une branche par story ni des tests écrits avant le code pour ces dix stories. Je ne le reconstruis pas après coup. Le cycle ci-dessus s'applique depuis la correction du dépôt : une branche courte par amélioration (refactor/, fix/, test/, docs/), un commit par intention, une pull request et la CI verte avant fusion. Les branches et pull requests visibles sur GitHub sont la seule preuve revendiquée.
 
-Protection de main (réglage GitHub) : pull request obligatoire et contrôles de statut requis avant fusion. Dans ce dépôt, la règle est appliquée par la pratique : toutes les évolutions, y compris cette documentation, sont passées par une pull request fusionnée dans main.
+Protection de main (réglage GitHub) : pull request obligatoire et contrôles de statut requis avant fusion. Ce réglage n'est pas activé sur ce dépôt. Depuis la correction, les évolutions passent par une pull request, par discipline et non par blocage technique.
 
 ## Contenu et qualité des commits
 
-Chaque commit correspond à une intention lisible (feat, fix, docs, test). La CI construit React, exécute les tests et conserve le rapport de couverture. Les mots de passe réels, bases locales et fichiers de travail sont exclus par .gitignore ; les comptes de démo n'ont aucune donnée réelle.
+Les messages suivent les Conventional Commits (feat, fix, refactor, test, docs). Le commit initial du MVP regroupe pourtant tout le parcours : c'est le défaut que je corrige en ne livrant plus qu'un changement par commit. La CI construit React, exécute les tests et conserve le rapport de couverture. Les mots de passe réels, bases locales et fichiers de travail sont exclus par .gitignore ; les comptes de démo n'ont aucune donnée réelle.
 
-Exemple d'itération : créer feat/US-03-dossier, écrire un test du comportement attendu, implémenter la route et l'écran, vérifier les tests, ouvrir une pull request puis fusionner après revue. Une story n'est DONE que si ses critères fonctionnels et la DoD sont respectés.
+Exemple d'itération cible : créer feat/US-03-dossier, écrire un test du comportement attendu, implémenter la route et l'écran, vérifier les tests, ouvrir une pull request puis fusionner après revue. Une story n'est DONE que si ses critères fonctionnels et la DoD sont respectés.
 
 <!-- page -->
 # 4 Développer une user story du backlog
@@ -263,7 +263,17 @@ La revue de code a été utilisée pour compléter les tests, notamment sur les 
 
 ## Exemple de cycle de correction
 
-Pour le contrôle des fichiers, un test a d'abord envoyé une signature PDF tronquée. Le comportement initial acceptait ce contenu et le test a échoué. Le contrôle a ensuite été renforcé avec un parseur et des fixtures positives valides. Le test de non-régression et la suite ont été relancés.
+Le bug de code retenu est celui du contrôle des pièces justificatives, dans BusinessRules.fileType.
+
+1. **Symptôme** : un fichier de cinq octets commençant par %PDF- est accepté comme pièce d'identité.
+2. **Résultat attendu / obtenu** : refus avec le message « Document illisible » ; l'ancienne version répondait par un succès.
+3. **Couche responsable** : la règle métier. Le contrôleur et la base ne font que transmettre les octets.
+4. **Plus petit test** : un tableau d'octets tronqué passé à fileType, sans HTTP. C'est le test rejectsTruncatedPdfAndImagesEvenWithCorrectSignature de BusinessRulesTest, qui couvre aussi les en-têtes JPEG et PNG tronqués.
+5. **Cause** : la vérification s'arrêtait à la signature, qui prouve le début du fichier et non sa lisibilité.
+6. **Correction** : lecture réelle du PDF avec PDFBox (non chiffré, 1 à 100 pages) et décodage des images avec ImageIO (20 mégapixels maximum).
+7. **Preuve** : ce test et la suite complète (32 tests) passent, puis la CI.
+
+L'historique Git ne montre pas l'ordre test puis correctif pour ce bug, corrigé pendant la réalisation initiale. Le test de non-régression le protège désormais. Pour tout nouveau bug, l'ordre sera vérifiable : une branche fix/BUG-xx, un premier commit contenant le test qui échoue, un second contenant la correction, puis une pull request.
 
 Cette correction améliore la validité structurelle des pièces, mais elle ne remplace ni l'analyse antivirus ni l'évaluation humaine de leur contenu. Un PDF valide peut contenir une pièce qui n'est pas le justificatif demandé : l'administrateur conserve la décision métier.
 
@@ -359,6 +369,20 @@ Racine des notes : G:/Mon Drive/ObsidianVault/Notes/Cours/BLOC 3.
 
 [S9] Render, offre gratuite et spécification Blueprint : https://render.com/docs/free et https://render.com/docs/blueprint-spec, consultées le 5 novembre 2026.
 
-## Conditions encore nécessaires pour un dépôt final
+## Retour sur le premier dépôt
 
-Publier les sources dans un dépôt public, ajouter ses liens frontend/backend en première page, choisir l'hébergement, déployer et vérifier tous les parcours depuis l'URL distante. Renseigner les comptes admin/client distants, vérifier les droits de consultation du correcteur et conserver le rapport CI du commit livré. Relire le dossier pour pouvoir défendre chaque choix et expliquer ses limites pendant la soutenance.
+Le premier dépôt a reçu trois critiques. Voici l'état de chacune, sans plus que ce que le dépôt prouve.
+
+| Critique | Constat | Réponse |
+|---|---|---|
+| Historique Git : un seul commit pour toute l'application, pas de branche par story | Exact : le parcours US-01 à US-10 est dans le commit 6696236 de feat/mvp | Écart reconnu en partie 3. Chaque amélioration passe désormais par sa branche, ses commits et sa pull request |
+| Code compact et peu lisible | Exact : lignes denses, plusieurs instructions par ligne, résultats en Map | BusinessRules réécrit en méthodes courtes à constantes nommées, branche refactor/lisibilite-regles-metier, 32 tests inchangés. MotorsService reste à découper en services par domaine |
+| Démarche C3.3 centrée sur la configuration | Exact : l'exemple de la première version était une erreur de déploiement | Démarche reprise sur un bug de code, le faux PDF accepté, en partie 9 |
+
+Ce tableau décrit l'état au moment de la génération du PDF. Les branches, pull requests et la CI verte se vérifient sur https://github.com/Adam-84/m-motors-bloc3.
+
+## État de la livraison et limites assumées
+
+Les sources sont publiées dans un dépôt public avec ses liens frontend et backend en première page, l'application est déployée sur Render et les comptes d'évaluation distants sont renseignés et testés. Les parcours ont été vérifiés depuis l'URL publique.
+
+Restent à renforcer dans les prochaines itérations : un audit de sécurité indépendant, un test de charge représentatif, un suivi continu de la production et la migration réelle de l'ancien SI. Je suis ouvert aux critiques de l'évaluateur sur ces points et je les traiterai par des branches fix/ et feat/ avec pull request, tests et redéploiement.

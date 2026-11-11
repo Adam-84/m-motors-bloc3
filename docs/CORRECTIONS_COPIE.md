@@ -1,0 +1,31 @@
+# Textes de remplacement pour la copie à rendre
+
+Réponses corrigées après le retour de l'évaluateur sur le dépôt 1. À coller dans le document Word, à la place des réponses actuelles. Tout ce qui est écrit ici est vérifiable dans le dépôt.
+
+## Organisation Git (C3.1)
+
+Le dépôt est un monorepo public : https://github.com/Adam-84/m-motors-bloc3 (dossiers `frontend` et `backend`).
+
+Le principe retenu est un trunk-based simplifié : `main` reste stable et déployable, et chaque évolution passe par une branche courte (`feat/`, `fix/`, `refactor/`, `test/`, `docs/`), des commits en Conventional Commits, une pull request avec le modèle du dépôt, puis une fusion après CI verte. Les règles sont dans `CONTRIBUTING.md`.
+
+**Point à reconnaître.** Le premier incrément, le parcours complet US-01 à US-10, a été livré en un seul commit sur `feat/mvp`. L'historique ne montre donc ni une branche par story ni des tests écrits avant le code pour ces dix stories, et je ne le reconstruis pas après coup. Depuis le retour de l'évaluateur, la méthode est appliquée pour de bon : chaque amélioration a sa branche, ses commits, sa pull request et sa CI. La protection de `main` n'est pas activée sur GitHub ; la règle repose sur la discipline.
+
+## Démarche d'investigation sur un bug de code (C3.3)
+
+Bug retenu : le contrôle des pièces justificatives acceptait un faux PDF.
+
+1. **Reproduire.** J'envoie en pièce d'identité un fichier de cinq octets, `%PDF-`. L'ancienne version répond par un succès, alors que le résultat attendu est un refus.
+2. **Isoler la couche.** L'interface et le contrôleur ne font que transmettre les octets, et la base les stocke telles quelles. Le défaut est dans la règle métier `BusinessRules.fileType`.
+3. **Écrire le plus petit test.** Un test unitaire sans HTTP passe un tableau d'octets tronqué à `fileType` et attend un refus. C'est `rejectsTruncatedPdfAndImagesEvenWithCorrectSignature`, qui couvre aussi les en-têtes JPEG et PNG tronqués.
+4. **Corriger la cause.** La vérification s'arrêtait à la signature, qui prouve le début du fichier et non sa lisibilité. Le fichier est maintenant réellement lu : PDFBox pour les PDF (non chiffrés, 1 à 100 pages) et ImageIO pour les images (20 mégapixels maximum).
+5. **Valider.** Le test passe, puis la suite complète (32 tests) et la CI GitHub Actions. Le test reste dans la suite comme test de non-régression.
+
+D'autres défauts de code ont été trouvés de la même façon :
+- le schéma échouait sur H2 parce que `year` est un mot réservé, d'où la colonne `model_year` ;
+- l'historique des dossiers disparaissait au-delà de 200 à cause d'un `LIMIT 200`, d'où le retrait de la limite et un test avec 201 dossiers.
+
+Limite assumée : l'historique Git ne prouve pas l'ordre test puis correctif pour ces trois bugs, corrigés pendant la réalisation initiale. Pour tout nouveau bug, je procède en deux commits sur une branche `fix/BUG-xx`, le test qui échoue puis la correction.
+
+## Qualité du code
+
+L'évaluateur a relevé un code compact et peu lisible. Les corrections sont faites par branches : `BusinessRules` (méthodes courtes, constantes nommées), puis découpage de `MotorsService` en services par domaine, enfin tests supplémentaires sur les branches non couvertes (73,98 %). Le comportement reste identique, protégé par les 32 tests existants.
