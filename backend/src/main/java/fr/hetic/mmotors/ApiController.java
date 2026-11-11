@@ -31,10 +31,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api")
 class ApiController {
-    private final MotorsService service;
+    private final AccountService accounts;
+    private final VehicleService vehicles;
+    private final DossierService dossiers;
 
-    ApiController(MotorsService service) {
-        this.service = service;
+    ApiController(AccountService accounts, VehicleService vehicles, DossierService dossiers) {
+        this.accounts = accounts;
+        this.vehicles = vehicles;
+        this.dossiers = dossiers;
     }
 
     // --- Session et comptes ---
@@ -47,12 +51,12 @@ class ApiController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     Object register(@Valid @RequestBody Registration input) {
-        return service.register(input);
+        return accounts.register(input);
     }
 
     @GetMapping("/me")
     Object me(Authentication auth) {
-        return service.me(auth.getName());
+        return accounts.me(auth.getName());
     }
 
     // --- Catalogue public ---
@@ -66,30 +70,30 @@ class ApiController {
     Object vehicles(@RequestParam(required = false) String offer,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) BigDecimal maxPrice) {
-        return service.vehicles(offer, search, maxPrice, false);
+        return vehicles.vehicles(offer, search, maxPrice, false);
     }
 
     @GetMapping("/vehicles/{id}")
     Object vehicle(@PathVariable String id) {
-        return service.vehicle(id);
+        return vehicles.vehicle(id);
     }
 
     // --- Gestion du catalogue (admin) ---
 
     @GetMapping("/admin/vehicles")
     Object adminVehicles() {
-        return service.vehicles(null, null, null, true);
+        return vehicles.vehicles(null, null, null, true);
     }
 
     @PostMapping("/admin/vehicles")
     @ResponseStatus(HttpStatus.CREATED)
     Object addVehicle(@Valid @RequestBody VehicleInput input) {
-        return service.addVehicle(input);
+        return vehicles.addVehicle(input);
     }
 
     @PutMapping("/admin/vehicles/{id}/offer")
     Object offer(@PathVariable String id, @Valid @RequestBody OfferInput input) {
-        return service.switchOffer(id, input.offer());
+        return vehicles.switchOffer(id, input.offer());
     }
 
     // --- Dossiers du client ---
@@ -97,34 +101,34 @@ class ApiController {
     @PostMapping("/dossiers")
     @ResponseStatus(HttpStatus.CREATED)
     Object create(@Valid @RequestBody DossierInput input, Authentication auth) {
-        return service.createDossier(auth.getName(), input);
+        return dossiers.createDossier(auth.getName(), input);
     }
 
     @GetMapping("/dossiers")
     Object dossiers(Authentication auth) {
-        return service.dossiers(auth, false);
+        return dossiers.dossiers(auth, false);
     }
 
     @GetMapping("/dossiers/{id}")
     Object dossier(@PathVariable String id, Authentication auth) {
-        return service.dossier(id, auth);
+        return dossiers.dossier(id, auth);
     }
 
     @PostMapping("/dossiers/{id}/documents")
     @ResponseStatus(HttpStatus.CREATED)
     Object upload(@PathVariable String id, @RequestParam String kind,
             @RequestParam MultipartFile file, Authentication auth) throws IOException {
-        return service.upload(id, auth, kind, file.getBytes());
+        return dossiers.upload(id, auth, kind, file.getBytes());
     }
 
     @PostMapping("/dossiers/{id}/submit")
     Object submit(@PathVariable String id, Authentication auth) {
-        return service.submit(id, auth);
+        return dossiers.submit(id, auth);
     }
 
     @GetMapping("/documents/{id}")
     ResponseEntity<byte[]> document(@PathVariable String id, Authentication auth) {
-        var doc = service.document(id, auth);
+        var doc = dossiers.document(id, auth);
         String contentType = (String) doc.get("contentType");
         String filename = doc.get("kind") + extensionOf(contentType);
         return ResponseEntity.ok()
@@ -138,12 +142,12 @@ class ApiController {
 
     @GetMapping("/admin/dossiers")
     Object adminDossiers(Authentication auth) {
-        return service.dossiers(auth, true);
+        return dossiers.dossiers(auth, true);
     }
 
     @PostMapping("/admin/dossiers/{id}/decision")
     Object decision(@PathVariable String id, @Valid @RequestBody DecisionInput input) {
-        return service.decide(id, input);
+        return dossiers.decide(id, input);
     }
 
     /** L'extension vient du type réellement détecté à l'envoi, jamais du nom fourni par le client. */
