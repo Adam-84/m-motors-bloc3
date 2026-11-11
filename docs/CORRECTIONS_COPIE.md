@@ -28,4 +28,4 @@ Limite assumée : l'historique Git ne prouve pas l'ordre test puis correctif pou
 
 ## Qualité du code
 
-L'évaluateur a relevé un code compact et peu lisible. Les corrections sont faites par branches : `BusinessRules` et `MotorsService` ont été réécrits (une instruction par ligne, constantes nommées pour les statuts, méthodes extraites), sans changer le comportement, protégé par les 32 tests existants. Restent à faire : le découpage de `MotorsService` en services par domaine et des tests sur les branches non couvertes (73,98 %).
+L'évaluateur a relevé un code compact et peu lisible. Les corrections sont faites par branches : `BusinessRules` et `MotorsService` ont été réécrits (une instruction par ligne, constantes nommées pour les statuts, méthodes extraites), sans changer le comportement, protégé par les 32 tests existants. Une branche `test/` (PR 11) a ensuite porté la couverture des branches de 74,42 % à 96,12 % avec 54 tests. Reste à faire : le découpage de `MotorsService` en services par domaine.

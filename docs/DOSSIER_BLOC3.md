@@ -214,7 +214,7 @@ Les valeurs ci-dessous sont calculées à partir des fichiers produits par Maven
 
 Le pourcentage porte sur les classes de production Java instrumentées par JaCoCo, y compris configuration, contrôleurs et gestion d'erreurs. Ce n'est pas une mesure de couverture du code React ni une preuve que tous les défauts possibles sont éliminés. Les classes et les compteurs détaillés restent disponibles dans target/site/jacoco/index.html.
 
-![Rapport JaCoCo du backend : 90 % des instructions et 73 % des branches couvertes, 12 classes, aucune classe non couverte. Les pourcentages sont arrondis à l'entier par JaCoCo ; le tableau ci-dessus donne les valeurs à deux décimales.](docs/captures/jacoco-couverture.png)
+![Rapport JaCoCo du backend : 97 % des instructions et 96 % des branches couvertes, aucune classe non couverte. Les pourcentages sont arrondis à l'entier par JaCoCo ; le tableau ci-dessus donne les valeurs à deux décimales.](docs/captures/jacoco-couverture.png)
 
 ## Ce qui est vérifié
 
@@ -273,7 +273,7 @@ Le bug de code retenu est celui du contrôle des pièces justificatives, dans Bu
 4. **Plus petit test** : un tableau d'octets tronqué passé à fileType, sans HTTP. C'est le test rejectsTruncatedPdfAndImagesEvenWithCorrectSignature de BusinessRulesTest, qui couvre aussi les en-têtes JPEG et PNG tronqués.
 5. **Cause** : la vérification s'arrêtait à la signature, qui prouve le début du fichier et non sa lisibilité.
 6. **Correction** : lecture réelle du PDF avec PDFBox (non chiffré, 1 à 100 pages) et décodage des images avec ImageIO (20 mégapixels maximum).
-7. **Preuve** : ce test et la suite complète (32 tests) passent, puis la CI.
+7. **Preuve** : ce test et la suite complète (32 tests à ce moment) passent, puis la CI.
 
 L'historique Git ne montre pas l'ordre test puis correctif pour ce bug, corrigé pendant la réalisation initiale. Le test de non-régression le protège désormais. Pour tout nouveau bug, l'ordre sera vérifiable : une branche fix/BUG-xx, un premier commit contenant le test qui échoue, un second contenant la correction, puis une pull request.
 
@@ -380,8 +380,9 @@ Le premier dépôt a reçu trois critiques. Voici l'état de chacune, sans plus 
 | Critique | Constat | Réponse |
 |---|---|---|
 | Historique Git : un seul commit pour toute l'application, pas de branche par story | Exact : le parcours US-01 à US-10 est dans le commit 6696236 de feat/mvp | Écart reconnu en partie 3. Chaque amélioration passe désormais par sa branche, ses commits et sa pull request |
-| Code compact et peu lisible | Exact : lignes denses, plusieurs instructions par ligne, résultats en Map | BusinessRules (PR 6) et MotorsService (PR 8) réécrits : une instruction par ligne, constantes nommées pour les statuts, méthodes extraites, 32 tests inchangés. Limite : MotorsService n'est pas découpé en services par domaine, et 2 lignes dépassent encore 120 caractères |
+| Code compact et peu lisible | Exact : lignes denses, plusieurs instructions par ligne, résultats en Map | BusinessRules (PR 6) et MotorsService (PR 8) réécrits : une instruction par ligne, constantes nommées pour les statuts, méthodes extraites, 32 tests alors existants inchangés. Limite : MotorsService n'est pas découpé en services par domaine, et 2 lignes dépassent encore 120 caractères |
 | Démarche C3.3 centrée sur la configuration | Exact : l'exemple de la première version était une erreur de déploiement | Démarche reprise sur un bug de code, le faux PDF accepté, en partie 9 |
+| Branches peu testées (point faible de la couverture) | Exact : 74,42 % des branches avant la PR 11 | PR 11 : 22 tests sur les cas d'erreur et les cas limites (pièces, doublons, 404, 409, 413, démo), sans changer le code applicatif. Mesure actuelle dans le tableau de la partie 7. Restent quelques garde-fous défensifs non testés |
 
 Ce tableau décrit l'état au moment de la génération du PDF. Les branches, pull requests et la CI verte se vérifient sur https://github.com/Adam-84/m-motors-bloc3.
 
