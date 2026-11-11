@@ -112,7 +112,7 @@ Protection de main (réglage GitHub) : pull request obligatoire et contrôles de
 
 ## Contenu et qualité des commits
 
-Chaque commit correspond à une intention lisible (feat, fix, docs, test). La CI construit React, exécute les tests et conserve le rapport de couverture. Les mots de passe réels, bases locales et fichiers de travail sont exclus par .gitignore ; les comptes de démo n'ont aucune donnée réelle.
+Les messages suivent les Conventional Commits (feat, fix, refactor, test, docs). Le commit initial du MVP regroupe pourtant tout le parcours : c'est le défaut que je corrige en ne livrant plus qu'un changement par commit. La CI construit React, exécute les tests et conserve le rapport de couverture. Les mots de passe réels, bases locales et fichiers de travail sont exclus par .gitignore ; les comptes de démo n'ont aucune donnée réelle.
 
 Exemple d'itération cible : créer feat/US-03-dossier, écrire un test du comportement attendu, implémenter la route et l'écran, vérifier les tests, ouvrir une pull request puis fusionner après revue. Une story n'est DONE que si ses critères fonctionnels et la DoD sont respectés.
 
@@ -368,6 +368,18 @@ Racine des notes : G:/Mon Drive/ObsidianVault/Notes/Cours/BLOC 3.
 [S8] Spring Boot 3.5, exigences système : https://docs.spring.io/spring-boot/3.5/system-requirements.html. PDFBox : https://pdfbox.apache.org. Les versions exactes sont fixées dans pom.xml et package-lock.json.
 
 [S9] Render, offre gratuite et spécification Blueprint : https://render.com/docs/free et https://render.com/docs/blueprint-spec, consultées le 5 novembre 2026.
+
+## Retour sur le premier dépôt
+
+Le premier dépôt a reçu trois critiques. Voici l'état de chacune, sans plus que ce que le dépôt prouve.
+
+| Critique | Constat | Réponse |
+|---|---|---|
+| Historique Git : un seul commit pour toute l'application, pas de branche par story | Exact : le parcours US-01 à US-10 est dans le commit 6696236 de feat/mvp | Écart reconnu en partie 3. Chaque amélioration passe désormais par sa branche, ses commits et sa pull request |
+| Code compact et peu lisible | Exact : lignes denses, plusieurs instructions par ligne, résultats en Map | BusinessRules réécrit en méthodes courtes à constantes nommées, branche refactor/lisibilite-regles-metier, 32 tests inchangés. MotorsService reste à découper en services par domaine |
+| Démarche C3.3 centrée sur la configuration | Exact : l'exemple de la première version était une erreur de déploiement | Démarche reprise sur un bug de code, le faux PDF accepté, en partie 9 |
+
+Ce tableau décrit l'état au moment de la génération du PDF. Les branches, pull requests et la CI verte se vérifient sur https://github.com/Adam-84/m-motors-bloc3.
 
 ## État de la livraison et limites assumées
 
