@@ -173,6 +173,23 @@ public class DossierService {
         return dossierUnchecked(id);
     }
 
+    /** US-11 : le propriétaire abandonne un dossier encore en brouillon ; ses pièces sont supprimées. */
+    @Transactional
+    public void cancelDraft(String id, Authentication auth) {
+        lockDossier(id);
+        Map<String, Object> dossier = dossierUnchecked(id);
+        if (!dossier.get("email").equals(auth.getName())) {
+            throw Failures.missing();
+        }
+        if (!dossier.get("status").equals(DRAFT)) {
+            throw Failures.conflict("Seul un dossier en brouillon peut être annulé.");
+        }
+        db.update("DELETE FROM document WHERE dossier_id = ?", id);
+        db.update("DELETE FROM dossier_option WHERE dossier_id = ?", id);
+        db.update("DELETE FROM dossier WHERE id = ?", id);
+        LOG.info("event=dossier_cancelled dossier={}", id);
+    }
+
     @Transactional
     public Map<String, Object> decide(String id, Models.DecisionInput input) {
         lockDossier(id);
