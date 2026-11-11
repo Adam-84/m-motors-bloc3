@@ -376,7 +376,7 @@ Le premier dépôt a reçu trois critiques. Voici l'état de chacune, sans plus 
 | Critique | Constat | Réponse |
 |---|---|---|
 | Historique Git : un seul commit pour toute l'application, pas de branche par story | Exact : le parcours US-01 à US-10 est dans le commit 6696236 de feat/mvp | Écart reconnu en partie 3. Chaque amélioration passe désormais par sa branche, ses commits et sa pull request |
-| Code compact et peu lisible | Exact : lignes denses, plusieurs instructions par ligne, résultats en Map | BusinessRules réécrit en méthodes courtes à constantes nommées, branche refactor/lisibilite-regles-metier, 32 tests inchangés. MotorsService reste à découper en services par domaine |
+| Code compact et peu lisible | Exact : lignes denses, plusieurs instructions par ligne, résultats en Map | BusinessRules (PR 6) et MotorsService (PR 8) réécrits : une instruction par ligne, constantes nommées pour les statuts, méthodes extraites, 32 tests inchangés. Limite : MotorsService n'est pas découpé en services par domaine, et 2 lignes dépassent encore 120 caractères |
 | Démarche C3.3 centrée sur la configuration | Exact : l'exemple de la première version était une erreur de déploiement | Démarche reprise sur un bug de code, le faux PDF accepté, en partie 9 |
 
 Ce tableau décrit l'état au moment de la génération du PDF. Les branches, pull requests et la CI verte se vérifient sur https://github.com/Adam-84/m-motors-bloc3.
