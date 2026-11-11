@@ -13,7 +13,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle, Preformatted
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle, Preformatted, Image as PdfImage, KeepTogether
 import pypdfium2 as pdfium
 from PIL import Image, ImageDraw
 
@@ -99,6 +99,17 @@ def main():
         ]))
         story.extend([Spacer(1, 5), table, Spacer(1, 13)])
 
+    styles.add(ParagraphStyle("CaptionLocal", fontName="Arial-Italic", fontSize=8.6, leading=12, spaceAfter=12, textColor=colors.HexColor("#4a5964")))
+
+    def add_figure(caption, relative_path):
+        picture = ROOT / relative_path
+        from PIL import Image as PilImage
+        with PilImage.open(picture) as source_image:
+            ratio = source_image.height / source_image.width
+        figure = PdfImage(str(picture), width=available, height=available * ratio)
+        figure.hAlign = "LEFT"
+        story.append(KeepTogether([Spacer(1, 4), figure, Spacer(1, 4), paragraph(caption, "CaptionLocal")]))
+
     lines = source.splitlines()
     index = 0
     while index < len(lines):
@@ -114,6 +125,9 @@ def main():
             while index < len(lines) and not lines[index].startswith("```"):
                 code.append(lines[index]); index += 1
             story.append(Preformatted("\n".join(code), code_style))
+        elif line.startswith("!["):
+            match = re.fullmatch(r"!\[(.*)\]\((.*)\)", line)
+            add_figure(match.group(1), match.group(2))
         elif line.startswith("|"):
             table_lines = []
             while index < len(lines) and lines[index].strip().startswith("|"):
@@ -128,7 +142,7 @@ def main():
             story.append(paragraph("• " + line[2:], "BulletLocal"))
         else:
             text = [line]
-            while index + 1 < len(lines) and lines[index + 1].strip() and not lines[index + 1].startswith(("#", "|", "- ", "```", "<!--")):
+            while index + 1 < len(lines) and lines[index + 1].strip() and not lines[index + 1].startswith(("#", "|", "- ", "```", "<!--", "![")):
                 index += 1; text.append(lines[index].strip())
             story.append(paragraph(" ".join(text)))
         index += 1
@@ -140,7 +154,7 @@ def main():
         canvas.setFont("Arial", 8)
         canvas.setFillColor(colors.HexColor("#657482"))
         canvas.drawString(50, height - 32, "M-MOTORS  /  BLOC 3")
-        canvas.drawString(50, 28, "Validation locale - publication à compléter avant dépôt final")
+        canvas.drawString(50, 28, "Dossier de réalisation - application publiée sur Render")
         canvas.drawRightString(width - 50, 28, str(doc.page))
     SimpleDocTemplate(str(pdf_path), pagesize=A4, rightMargin=50, leftMargin=50, topMargin=60, bottomMargin=53).build(story, onFirstPage=page, onLaterPages=page)
     render_root = OUTPUT / "qa-pdf"

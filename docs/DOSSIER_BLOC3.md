@@ -214,6 +214,8 @@ Les valeurs ci-dessous sont calculées à partir des fichiers produits par Maven
 
 Le pourcentage porte sur les classes de production Java instrumentées par JaCoCo, y compris configuration, contrôleurs et gestion d'erreurs. Ce n'est pas une mesure de couverture du code React ni une preuve que tous les défauts possibles sont éliminés. Les classes et les compteurs détaillés restent disponibles dans target/site/jacoco/index.html.
 
+![Rapport JaCoCo du backend : 90 % des instructions et 73 % des branches couvertes, 12 classes, aucune classe non couverte. Les pourcentages sont arrondis à l'entier par JaCoCo ; le tableau ci-dessus donne les valeurs à deux décimales.](docs/captures/jacoco-couverture.png)
+
 ## Ce qui est vérifié
 
 Les tests unitaires couvrent le total des services sélectionnés, les options interdites à l'achat, les services inconnus, les deux pièces obligatoires, les transitions de statut, le refus motivé et la lecture des formats de fichiers. Les fixtures positives sont de vrais PDF et images générés par les outils de test.
@@ -328,6 +330,8 @@ Les parcours à vérifier sont : filtrer les offres ; ouvrir une fiche ; s'inscr
 
 Le Dockerfile effectue la construction React et les tests Java avant de produire une image d'exécution. Le workflow GitHub Actions fourni prépare également les tests sur PostgreSQL et Cypress. Le fichier render.yaml (Blueprint) décrit le service web Docker et la base PostgreSQL managée, région Frankfurt, plan gratuit. Il a été appliqué depuis la branche main : l'application est en ligne en HTTPS avec les comptes de démonstration du tableau d'accès.
 
+![Page d'accueil de l'application servie par Render, adresse m-motors-bloc3.onrender.com visible dans le navigateur.](docs/captures/render-accueil.png)
+
 J'ai retenu Render après l'essai local. Son offre gratuite met les applications en veille et expire la base au bout de 30 jours [S9] : il faut tenir compte du calendrier de correction.
 
 Le déploiement dès la première story DONE est une bonne pratique recommandée dans l'énoncé. Dans cette réalisation, le développement a d'abord été validé en local ; la première mise en ligne regroupe donc l'ensemble des stories (US-01 à US-10) et non la seule première. Je ne présente pas de preuve historique artificielle : la preuve est le déploiement de main, visible sur Render et sur l'URL publique. Pour les itérations suivantes, chaque story DONE sera déployée dès qu'elle est fusionnée.
@@ -380,6 +384,8 @@ Le premier dépôt a reçu trois critiques. Voici l'état de chacune, sans plus 
 | Démarche C3.3 centrée sur la configuration | Exact : l'exemple de la première version était une erreur de déploiement | Démarche reprise sur un bug de code, le faux PDF accepté, en partie 9 |
 
 Ce tableau décrit l'état au moment de la génération du PDF. Les branches, pull requests et la CI verte se vérifient sur https://github.com/Adam-84/m-motors-bloc3.
+
+![Liste des pull requests fusionnées : neuf pull requests, aucune ouverte, CI verte (2/2) sur chacune. La première (#1) contient encore le parcours complet en un seul lot, c'est l'écart reconnu en partie 3 ; les pull requests #6 à #9 sont les corrections faites depuis le premier dépôt.](docs/captures/pull-requests-ci.png)
 
 ## État de la livraison et limites assumées
 
