@@ -50,7 +50,7 @@ public class VehicleService {
         }
         if (search != null && !search.isBlank()) {
             sql.append(" AND LOWER(CONCAT(brand, ' ', model, ' ', fuel)) LIKE ? ESCAPE '!'");
-            args.add("%" + escapeLike(search.toLowerCase(Locale.ROOT)) + "%");
+            args.add("%" + escapeLike(search.trim().toLowerCase(Locale.ROOT)) + "%");
         }
         if (maxPrice != null) {
             sql.append(" AND CASE WHEN offer = 'LOCATION' THEN monthly ELSE price END <= ?");
