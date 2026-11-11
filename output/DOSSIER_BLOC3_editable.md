@@ -108,7 +108,9 @@ Cycle cible pour chaque story : branche depuis main, test écrit en premier, imp
 
 **Écart reconnu entre ce cycle et l'historique.** Le premier incrément, le parcours complet US-01 à US-10, a été livré en un seul commit sur feat/mvp (6696236), sans branche ni pull request par story. L'historique ne permet donc pas de vérifier une branche par story ni des tests écrits avant le code pour ces dix stories. Je ne le reconstruis pas après coup. Le cycle ci-dessus s'applique depuis la correction du dépôt : une branche courte par amélioration (refactor/, fix/, test/, docs/), un commit par intention, une pull request et la CI verte avant fusion. Les branches et pull requests visibles sur GitHub sont la seule preuve revendiquée.
 
-Protection de main (réglage GitHub) : pull request obligatoire et contrôles de statut requis avant fusion. Ce réglage n'est pas activé sur ce dépôt. Depuis la correction, les évolutions passent par une pull request, par discipline et non par blocage technique.
+Le cycle complet est démontré sur une story réelle, US-11 (annuler un dossier en brouillon) : branche feat/US-11-annulation-brouillon, commit rouge 206ca6b (trois tests qui échouent), commit vert a9cec34 (route et service), commit f67a314 (bouton dans l'interface), pull request 20 fusionnée après CI verte.
+
+Protection de main (réglage GitHub) : pull request obligatoire et contrôles de statut requis avant fusion. Ce réglage est activé sur main depuis le 11 novembre 2026 : pull request obligatoire, contrôle build-test requis et branche à jour avant fusion. La pull request 20 (US-11) est la première fusionnée sous cette règle ; les pull requests 1 à 19 l'ont été avant, par discipline.
 
 ## Contenu et qualité des commits
 
@@ -161,6 +163,7 @@ La DoD reprend celle du B2 et la rend vérifiable : critères d'acceptation vali
 | US-08 Bascule | L'administrateur change achat/location seulement sans dossier actif | switchOffer et verrouillage véhicule |
 | US-09 Instruction | L'administrateur valide ou refuse un dossier soumis ; le refus exige un motif | decide et validation transactionnelle |
 | US-10 Options LOA | Le client choisit des services autorisés ; aucun service LOA ne peut être ajouté à un achat | BusinessRules.validateOptions et monthlyTotal |
+| US-11 Annulation | Le client annule un dossier en brouillon ; un dossier soumis ou d'un autre client est refusé (409, 404) | DossierService.cancelDraft, DELETE /api/dossiers/{id}, pull request 20 |
 
 Ces identifiants servent de correspondance locale avec les fonctionnalités du B1. Le contenu exact des cartes du board B2 n'a pas été importé automatiquement : il faut aligner les identifiants Trello avant de clôturer les cartes.
 
@@ -204,12 +207,12 @@ Les valeurs ci-dessous sont calculées à partir des fichiers produits par Maven
 
 | Mesure | Résultat local |
 |---|---|
-| Tests JUnit exécutés | 56 |
+| Tests JUnit exécutés | 59 |
 | Échecs JUnit | 0 |
 | Erreurs JUnit | 0 |
-| Couverture des lignes backend | 97,28 % soit 357 / 367 lignes |
-| Couverture des branches backend | 95,93 % |
-| Couverture des instructions backend | 97,33 % |
+| Couverture des lignes backend | 97,63 % soit 371 / 380 lignes |
+| Couverture des branches backend | 96,06 % |
+| Couverture des instructions backend | 97,69 % |
 | Parcours Cypress | 2 tests de bout en bout, 0 échec |
 
 Le pourcentage porte sur les classes de production Java instrumentées par JaCoCo, y compris configuration, contrôleurs et gestion d'erreurs. Ce n'est pas une mesure de couverture du code React ni une preuve que tous les défauts possibles sont éliminés. Les classes et les compteurs détaillés restent disponibles dans target/site/jacoco/index.html.
@@ -346,7 +349,7 @@ Le Dockerfile effectue la construction React et les tests Java avant de produire
 
 J'ai retenu Render après l'essai local. Son offre gratuite met les applications en veille et expire la base au bout de 30 jours [S9] : il faut tenir compte du calendrier de correction.
 
-Le déploiement dès la première story DONE est une bonne pratique recommandée dans l'énoncé. Dans cette réalisation, le développement a d'abord été validé en local ; la première mise en ligne regroupe donc l'ensemble des stories (US-01 à US-10) et non la seule première. Je ne présente pas de preuve historique artificielle : la preuve est le déploiement de main, visible sur Render et sur l'URL publique. Pour les itérations suivantes, chaque story DONE sera déployée dès qu'elle est fusionnée.
+Le déploiement dès la première story DONE est une bonne pratique recommandée dans l'énoncé. Dans cette réalisation, le développement a d'abord été validé en local ; la première mise en ligne regroupe donc l'ensemble des stories (US-01 à US-10) et non la seule première. Je ne présente pas de preuve historique artificielle : la preuve est le déploiement de main, visible sur Render et sur l'URL publique. Pour les itérations suivantes, chaque story DONE est déployée dès qu'elle est fusionnée : c'est le cas d'US-11, déployée seule depuis main après la pull request 20.
 
 ## Reprise et migration
 
