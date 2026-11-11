@@ -48,15 +48,34 @@ def measurements():
     return result
 
 
-def main():
+DOSSIER = {
+    "source": "docs/DOSSIER_BLOC3.md",
+    "editable": "DOSSIER_BLOC3_editable.md",
+    "pdf": "BachelorHETIC_Examen_B3Java_copiearendre_GHAJDAOUI_Adam.pdf",
+    "title": "Bloc 3 Développement de la solution digitale M-Motors",
+    "footer": "Dossier de réalisation - application publiée sur Render",
+    "full": True,
+}
+DEPOT1 = {
+    "source": "docs/DEPOT1_REPONSES.md",
+    "editable": "DEPOT1_REPONSES_editable.md",
+    "pdf": "BachelorHETIC_Examen_B3Java_depot1_GHAJDAOUI_Adam.pdf",
+    "title": "Dépôt 1 - C3.1 Développement d'une solution digitale M-Motors",
+    "footer": "Dépôt 1 - C3.1 - réponses aux quatre questions",
+    "full": False,
+}
+
+
+def main(target=DOSSIER):
     metrics = measurements()
-    source = (ROOT / "docs/DOSSIER_BLOC3.md").read_text(encoding="utf-8")
+    source = (ROOT / target["source"]).read_text(encoding="utf-8")
     for key, value in metrics.items():
         source = source.replace("{{" + key + "}}", str(value))
     if "{{" in source:
         raise RuntimeError("Mesure manquante dans le dossier.")
-    (OUTPUT / "DOSSIER_BLOC3_editable.md").write_text(source, encoding="utf-8")
-    (OUTPUT / "verification.json").write_text(json.dumps(metrics, ensure_ascii=False, indent=2), encoding="utf-8")
+    (OUTPUT / target["editable"]).write_text(source, encoding="utf-8")
+    if target["full"]:
+        (OUTPUT / "verification.json").write_text(json.dumps(metrics, ensure_ascii=False, indent=2), encoding="utf-8")
 
     font_root = Path("C:/Windows/Fonts")
     for name, filename in (("Arial", "arial.ttf"), ("Arial-Bold", "arialbd.ttf"), ("Arial-Italic", "ariali.ttf"), ("Consolas", "consola.ttf")):
@@ -147,16 +166,19 @@ def main():
             story.append(paragraph(" ".join(text)))
         index += 1
 
-    pdf_path = OUTPUT / "BachelorHETIC_Examen_B3Java_copiearendre_GHAJDAOUI_Adam.pdf"
+    pdf_path = OUTPUT / target["pdf"]
     def page(canvas, doc):
-        canvas.setTitle("Bloc 3 Développement de la solution digitale M-Motors")
+        canvas.setTitle(target["title"])
         canvas.setAuthor("Adam GHAJDAOUI")
         canvas.setFont("Arial", 8)
         canvas.setFillColor(colors.HexColor("#657482"))
         canvas.drawString(50, height - 32, "M-MOTORS  /  BLOC 3")
-        canvas.drawString(50, 28, "Dossier de réalisation - application publiée sur Render")
+        canvas.drawString(50, 28, target["footer"])
         canvas.drawRightString(width - 50, 28, str(doc.page))
     SimpleDocTemplate(str(pdf_path), pagesize=A4, rightMargin=50, leftMargin=50, topMargin=60, bottomMargin=53).build(story, onFirstPage=page, onLaterPages=page)
+    if not target["full"]:
+        print(json.dumps({"pdf": str(pdf_path), "metrics": metrics}, ensure_ascii=False))
+        return
     render_root = OUTPUT / "qa-pdf"
     render_root.mkdir(exist_ok=True)
     thumbs = []
@@ -177,4 +199,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    main(DEPOT1 if "--depot1" in sys.argv else DOSSIER)

@@ -8,6 +8,8 @@ Approche : trunk-based simplifié avec branches courtes. `main` est toujours sta
 | `feat/US-xx-nom` | Une user story du backlog | Part de `main`, courte durée, supprimée après fusion. |
 | `fix/BUG-xx-nom` | Correction d'un bug | Part de `main`. Contient un test de non-régression. |
 | `docs/nom` | Documentation seule | Même circuit de pull request. |
+| `refactor/nom` | Lisibilité sans changement de comportement | Les tests existants restent verts, sans modification. |
+| `test/nom` | Ajout ou réécriture de tests | Aucun changement du code de production. |
 
 ## Cycle d'une user story
 
