@@ -279,6 +279,18 @@ L'historique Git ne montre pas l'ordre test puis correctif pour ce bug, corrigé
 
 Cette correction améliore la validité structurelle des pièces, mais elle ne remplace ni l'analyse antivirus ni l'évaluation humaine de leur contenu. Un PDF valide peut contenir une pièce qui n'est pas le justificatif demandé : l'administrateur conserve la décision métier.
 
+## Bug traité en TDD
+
+Premier bug traité dans l'ordre test puis correctif, sur la branche fix/recherche-terme-avec-espaces et la pull request 17.
+
+1. **Symptôme** : la recherche publique « diesel » (avec une espace à la fin, fréquente après un copier-coller) ne renvoie aucun véhicule, alors que « diesel » en renvoie un.
+2. **Couche responsable** : VehicleService. La recherche compare le terme à LOWER(CONCAT(brand, ' ', model, ' ', fuel)) et le terme gardait ses espaces de bord, qui ne correspondent à rien dans cette chaîne.
+3. **Commit rouge (59e48a3)** : VehicleSearchTest ajoute deux tests HTTP (espace à la fin, espace au début). Ils échouent sur le code existant, c'est le but.
+4. **Commit vert (2bbfedc)** : le terme est nettoyé par trim() avant la construction du motif LIKE, une ligne modifiée. Les deux tests passent ainsi que le reste de la suite (56 tests).
+5. **Preuve** : l'historique de la branche montre le test qui échoue puis la correction. Le commit rouge seul fait échouer la CI, par construction ; la pull request a été fusionnée avec un commit de fusion pour conserver cet ordre.
+
+Limite : ce bug a été trouvé par lecture du code puis confirmé par les tests. D'autres zones lues sans défaut apparent (casse des e-mails, accès d'un client au dossier d'un autre, motif de refus, bascule d'offre) n'ont pas été testées une à une pour cette raison.
+
 ## Optimisations proportionnées
 
 Des index ciblent les dossiers par propriétaire et véhicule, ainsi que les véhicules par offre et disponibilité. Les listes résument les dossiers sans charger le binaire des pièces. Les fichiers sont chargés uniquement lors du téléchargement. La taille et la complexité des entrées sont bornées.
@@ -380,8 +392,8 @@ Le premier dépôt a reçu trois critiques. Voici l'état de chacune, sans plus 
 | Critique | Constat | Réponse |
 |---|---|---|
 | Historique Git : un seul commit pour toute l'application, pas de branche par story | Exact : le parcours US-01 à US-10 est dans le commit 6696236 de feat/mvp | Écart reconnu en partie 3. Chaque amélioration passe désormais par sa branche, ses commits et sa pull request |
-| Code compact et peu lisible | Exact : lignes denses, plusieurs instructions par ligne, résultats en Map | BusinessRules (PR 6) et MotorsService (PR 8) réécrits, puis ApiController, ApiErrors, SecurityConfig, DemoData et Models reformatés, et MotorsService découpé en AccountService, VehicleService et DossierService (deux branches refactor/). Une instruction par ligne, constantes nommées, aucune ligne de plus de 120 caractères dans le code principal, 54 tests inchangés et verts. Limite : les résultats restent des Map et non des objets typés, et ces reprises sont faites après le premier dépôt |
-| Démarche C3.3 centrée sur la configuration | Exact : l'exemple de la première version était une erreur de déploiement | Démarche reprise sur un bug de code, le faux PDF accepté, en partie 9 |
+| Code compact et peu lisible | Exact : lignes denses, plusieurs instructions par ligne, résultats en Map | BusinessRules (PR 6) et MotorsService (PR 8) réécrits, puis ApiController, ApiErrors, SecurityConfig, DemoData et Models reformatés, et MotorsService découpé en AccountService, VehicleService et DossierService (deux branches refactor/). Une instruction par ligne, constantes nommées, aucune ligne de plus de 120 caractères dans le code principal, tests inchangés et verts (54 à ce moment, 56 avec le test du bug de recherche). Limite : les résultats restent des Map et non des objets typés, et ces reprises sont faites après le premier dépôt |
+| Démarche C3.3 centrée sur la configuration | Exact : l'exemple de la première version était une erreur de déploiement | Démarche reprise sur un bug de code, le faux PDF accepté, puis un second bug (recherche avec espaces) traité en TDD : commit rouge 59e48a3, commit vert 2bbfedc, pull request 17. Limite : le faux PDF a été corrigé avant que la méthode ne soit appliquée |
 | Branches peu testées (point faible de la couverture) | Exact : 74,42 % des branches avant la PR 11 | PR 11 : 22 tests sur les cas d'erreur et les cas limites (pièces, doublons, 404, 409, 413, démo), sans changer le code applicatif. Mesure actuelle dans le tableau de la partie 7. Restent quelques garde-fous défensifs non testés |
 
 Ce tableau décrit l'état au moment de la génération du PDF. Les branches, pull requests et la CI verte se vérifient sur https://github.com/Adam-84/m-motors-bloc3.
