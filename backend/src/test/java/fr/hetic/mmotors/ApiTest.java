@@ -3,6 +3,7 @@ package fr.hetic.mmotors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -300,6 +301,46 @@ class ApiTest {
 
         db.update("UPDATE dossier SET status='REFUSE' WHERE id=?", first);
         dossier(OWNER, "veh-001", NO_OPTIONS);
+    }
+
+    // ---- US-11 : annulation d'un dossier en brouillon
+
+    private ResultActions cancel(String email, String dossierId) throws Exception {
+        return mvc.perform(delete("/api/dossiers/" + dossierId).with(user(email)).with(csrf()));
+    }
+
+    @Test
+    void ownerCanCancelADraftAndTheVehicleCanBeRequestedAgain() throws Exception {
+        account(OWNER);
+        String id = dossier(OWNER, "veh-002", "[\"ASSURANCE\"]");
+        upload(OWNER, id, "IDENTITE");
+
+        cancel(OWNER, id).andExpect(status().isNoContent());
+
+        mvc.perform(get("/api/dossiers/" + id).with(user(OWNER))).andExpect(status().isNotFound());
+        dossier(OWNER, "veh-002", NO_OPTIONS);
+    }
+
+    @Test
+    void submittedDossierCannotBeCancelled() throws Exception {
+        account(OWNER);
+        String id = dossier(OWNER, "veh-001", NO_OPTIONS);
+        upload(OWNER, id, "IDENTITE");
+        upload(OWNER, id, "DOMICILE");
+        submit(OWNER, id).andExpect(status().isOk());
+
+        cancel(OWNER, id).andExpect(status().isConflict());
+        mvc.perform(get("/api/dossiers/" + id).with(user(OWNER))).andExpect(status().isOk());
+    }
+
+    @Test
+    void otherClientCannotCancelADraft() throws Exception {
+        account(OWNER);
+        account("stranger@example.test");
+        String id = dossier(OWNER, "veh-001", NO_OPTIONS);
+
+        cancel("stranger@example.test", id).andExpect(status().isNotFound());
+        mvc.perform(get("/api/dossiers/" + id).with(user(OWNER))).andExpect(status().isOk());
     }
 
     @Test

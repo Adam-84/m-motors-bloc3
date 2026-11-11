@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -124,6 +125,12 @@ class ApiController {
     @PostMapping("/dossiers/{id}/submit")
     Object submit(@PathVariable String id, Authentication auth) {
         return dossiers.submit(id, auth);
+    }
+
+    @DeleteMapping("/dossiers/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void cancel(@PathVariable String id, Authentication auth) {
+        dossiers.cancelDraft(id, auth);
     }
 
     @GetMapping("/documents/{id}")
