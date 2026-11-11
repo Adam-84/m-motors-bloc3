@@ -54,4 +54,33 @@ class BusinessRulesTest {
             .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> BusinessRules.fileType(new byte[0])).isInstanceOf(IllegalArgumentException.class);
     }
+    @Test void rejectsEncryptedPdf() {
+        assertThatThrownBy(() -> BusinessRules.fileType(TestFiles.encryptedPdf())).isInstanceOf(IllegalArgumentException.class);
+    }
+    @Test void rejectsPdfWithoutPage() {
+        assertThatThrownBy(() -> BusinessRules.fileType(TestFiles.pdfWithPages(0))).isInstanceOf(IllegalArgumentException.class);
+    }
+    @Test void rejectsPdfWithTooManyPages() {
+        assertThatThrownBy(() -> BusinessRules.fileType(TestFiles.pdfWithPages(101))).isInstanceOf(IllegalArgumentException.class);
+    }
+    @Test void acceptsPdfAtThePageLimit() {
+        assertThat(BusinessRules.fileType(TestFiles.pdfWithPages(100))).isEqualTo("application/pdf");
+    }
+    @Test void rejectsImageThatNoReaderCanDecode() {
+        byte[] jpegSignatureOnly = new byte[64];
+        jpegSignatureOnly[0] = (byte) 0xFF; jpegSignatureOnly[1] = (byte) 0xD8; jpegSignatureOnly[2] = (byte) 0xFF;
+        assertThatThrownBy(() -> BusinessRules.fileType(jpegSignatureOnly)).isInstanceOf(IllegalArgumentException.class);
+    }
+    @Test void rejectsImageAboveTwentyMegapixels() {
+        assertThatThrownBy(() -> BusinessRules.fileType(TestFiles.imageOfSize(5000, 4001))).isInstanceOf(IllegalArgumentException.class);
+    }
+    @Test void acceptsImageAtTheMegapixelLimit() {
+        assertThat(BusinessRules.fileType(TestFiles.imageOfSize(5000, 4000))).isEqualTo("image/png");
+    }
+    @Test void rejectsUnknownOfferEvenWithoutServices() {
+        assertThatThrownBy(() -> BusinessRules.validateOptions("VENTE", Set.of())).isInstanceOf(IllegalArgumentException.class);
+    }
+    @Test void acceptsRentalWithKnownServices() {
+        assertThatCode(() -> BusinessRules.validateOptions("LOCATION", Set.of("ASSURANCE", "CONTROLE"))).doesNotThrowAnyException();
+    }
 }

@@ -185,4 +185,67 @@ class ApiTest {
         mvc.perform(get("/api/csrf")).andExpect(status().isOk()).andExpect(jsonPath("$.token").isNotEmpty());
         mvc.perform(get("/api/services")).andExpect(status().isOk()).andExpect(jsonPath("$.ASSURANCE").value(35));
     }
+    @Test void unknownVehicleCannotReceiveADossier() throws Exception {
+        account("owner@example.test");
+        mvc.perform(post("/api/dossiers").with(user("owner@example.test")).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+            .content("{\"vehicleId\":\"veh-inconnu\",\"options\":[]}")).andExpect(status().isNotFound());
+    }
+    @Test void sameClientCannotOpenTwoActiveDossiersOnOneVehicleButCanRetryAfterRefusal() throws Exception {
+        account("owner@example.test");
+        String first=dossier("owner@example.test","veh-001","[]");
+        mvc.perform(post("/api/dossiers").with(user("owner@example.test")).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+            .content("{\"vehicleId\":\"veh-001\",\"options\":[]}")).andExpect(status().isConflict());
+        db.update("UPDATE dossier SET status='REFUSE' WHERE id=?",first);
+        dossier("owner@example.test","veh-001","[]");
+    }
+    @Test void unavailableVehicleCannotReceiveADossier() throws Exception {
+        account("owner@example.test");
+        db.update("UPDATE vehicle SET available=FALSE WHERE id='veh-001'");
+        mvc.perform(post("/api/dossiers").with(user("owner@example.test")).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+            .content("{\"vehicleId\":\"veh-001\",\"options\":[]}")).andExpect(status().isConflict());
+    }
+    @Test void blankSearchIsIgnored() throws Exception {
+        mvc.perform(get("/api/vehicles").param("search","   ")).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(6));
+    }
+    @Test void documentKindMustBeKnown() throws Exception {
+        account("owner@example.test"); String id=dossier("owner@example.test","veh-001","[]");
+        mvc.perform(multipart("/api/dossiers/"+id+"/documents").file(new MockMultipartFile("file","piece.pdf","application/pdf",TestFiles.pdf()))
+            .param("kind","PASSEPORT").with(user("owner@example.test")).with(csrf())).andExpect(status().isBadRequest());
+    }
+    @Test void documentAboveFiveMegabytesReturns413() throws Exception {
+        account("owner@example.test"); String id=dossier("owner@example.test","veh-001","[]");
+        mvc.perform(multipart("/api/dossiers/"+id+"/documents").file(new MockMultipartFile("file","gros.pdf","application/pdf",new byte[5*1024*1024+1]))
+            .param("kind","IDENTITE").with(user("owner@example.test")).with(csrf()))
+            .andExpect(status().isPayloadTooLarge()).andExpect(jsonPath("$.message").value("Limite de 5 Mo."));
+    }
+    @Test void uploadToUnknownDossierReturns404() throws Exception {
+        account("owner@example.test");
+        mvc.perform(multipart("/api/dossiers/inconnu/documents").file(new MockMultipartFile("file","piece.pdf","application/pdf",TestFiles.pdf()))
+            .param("kind","IDENTITE").with(user("owner@example.test")).with(csrf())).andExpect(status().isNotFound());
+    }
+    @Test void decisionOnUnknownDossierReturns404() throws Exception {
+        mvc.perform(post("/api/admin/dossiers/inconnu/decision").with(user("admin").roles("ADMIN")).with(csrf())
+            .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"VALIDE\",\"reason\":\"\"}")).andExpect(status().isNotFound());
+    }
+    @Test void refusedDossierKeepsTheVehicleAvailable() throws Exception {
+        account("owner@example.test"); String id=dossier("owner@example.test","veh-001","[]");
+        db.update("UPDATE dossier SET status='SOUMIS'");
+        mvc.perform(post("/api/admin/dossiers/"+id+"/decision").with(user("admin").roles("ADMIN")).with(csrf())
+            .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"REFUSE\",\"reason\":\"Pièces illisibles\"}"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REFUSE"));
+        assertThat(db.queryForObject("SELECT available FROM vehicle WHERE id='veh-001'",Boolean.class)).isTrue();
+    }
+    @Test void downloadSetsExtensionFromTheRealContentType() throws Exception {
+        account("owner@example.test"); String id=dossier("owner@example.test","veh-001","[]");
+        for (var file : java.util.Map.of("png",TestFiles.image("png"),"jpg",TestFiles.image("jpeg")).entrySet()) {
+            mvc.perform(multipart("/api/dossiers/"+id+"/documents").file(new MockMultipartFile("file","piece","image/png",file.getValue()))
+                .param("kind",file.getKey().equals("png")?"IDENTITE":"DOMICILE").with(user("owner@example.test")).with(csrf())).andExpect(status().isCreated());
+        }
+        String png=db.queryForObject("SELECT id FROM document WHERE dossier_id=? AND kind='IDENTITE'",String.class,id);
+        String jpg=db.queryForObject("SELECT id FROM document WHERE dossier_id=? AND kind='DOMICILE'",String.class,id);
+        mvc.perform(get("/api/documents/"+png).with(user("owner@example.test")))
+            .andExpect(header().string("Content-Disposition","attachment; filename=\"IDENTITE.png\""));
+        mvc.perform(get("/api/documents/"+jpg).with(user("owner@example.test")))
+            .andExpect(header().string("Content-Disposition","attachment; filename=\"DOMICILE.jpg\""));
+    }
 }
